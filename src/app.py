@@ -4,6 +4,7 @@ import os
 import json
 
 from src.model import Task
+from src.status import Status
 
 JSON_FILE_PATH:str = os.getcwd()+'/tasks.json'
 
@@ -28,7 +29,7 @@ def add(description:str)->None:
 
 
 
-def update(task_id:str)->None:...
+def update(task_id:str)->None:...#TODO
 
 def delete(task_id:str)->str:
     tasks:list[dict[str,Any] | None]= all_tasks()
@@ -45,27 +46,49 @@ def delete(task_id:str)->str:
     return 'No indexes found'
 
 
-def mark_as_done(task_id:str)->None:...
-def mark_as_in_progress(task_id:str)->None:...
+def mark_as(status:Status,task_id:str)->str:
+    tasks:list[dict[str,Any] | None]= all_tasks()
+    try:
+        task_id = int(task_id)
+    except Exception as e:
+        return f'"{task_id}" is not a valid number'
 
-def all_tasks()->List[Dict[str,Any] | None]:
+    for index,task in enumerate(tasks.copy()):
+        if task.get('task_id') == task_id:
+            tasks[index]['status'] = status
+            write_json(tasks)
+            return f'Task number: {task_id} marked as {status} correctly'
+    return 'We couldn\'t find such task :('
+    
+
+def mark_as_done(task_id:str)-> str:
+    return mark_as(Status.DONE,task_id)
+    
+def mark_as_in_progress(task_id:str)->str:
+    return mark_as(Status.IN_PROGRESS,task_id)
+
+def all_tasks(flag:str|None = None)->List[Dict[str,Any] | None]:
     data:list[dict[str,Any]]=[]
+
     with open(JSON_FILE_PATH) as file:
         try:
             data = json.load(file)
         except json.JSONDecodeError :
             pass
             
-    return data
+    if flag is None:
+        return data
 
+    all_flagged:List[Dict[str,Any] | None]=[]
+    for task in data:
+        if flag.upper() == task.get('status').upper() :
+            all_flagged.append(task)
+        elif flag.upper() == task.get('status').upper() :
+            all_flagged.append(task)
+        elif flag.upper() ==  task.get('status').upper():
+            all_flagged.append(task)
 
-def all_done()->None:...
-def all_not_done()->None:...
-def all_in_progress()->None:...
-
-
-
-
+    return all_flagged
 
 
 def main()->None:
@@ -76,19 +99,35 @@ def main()->None:
     parser_add.add_argument('task_description', help='Add a description to the task')
 
     parser_list:ArgumentParser = subparser.add_parser('list', help='Shows all the tasks')
+    parser_list.add_argument('-flag','-f',help='Provide a flag in case you want to filter the data')
 
     parser_delete:ArgumentParser = subparser.add_parser('delete',help='Delete the task when an id is provided')
     parser_delete.add_argument('task_id', help='Provide the id of the specific id you want to delete')
+
+    parser_mark_done:ArgumentParser = subparser.add_parser('mark-done', help='Mark a task as DONE')
+    parser_mark_done.add_argument('task_id',help='Provide a id in order to know wich task set as DONE')
+
+    parser_mark_in_progress:ArgumentParser = subparser.add_parser('mark-in-progress', help='Mark a task as IN PROGRESS')
+    parser_mark_in_progress.add_argument('task_id',help='Provide a id in order to know wich task set as IN PROGRESS')
+
 
     args = parser.parse_args()
 
     if args.command=='add':
         add(args.task_description)
+
     elif args.command =='list':
-        print(all_tasks())
+        print(all_tasks(args.flag))
+
     elif args.command == 'delete':
         print(delete(args.task_id))
-        
+
+    elif args.command == 'mark-done':
+        print(mark_as_done(args.task_id))
+
+    elif args.command == 'mark-in-progress':
+        print(mark_as_in_progress(args.task_id))
+
 
     else:
         parser.print_help()
