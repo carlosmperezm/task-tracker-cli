@@ -1,4 +1,4 @@
 class Status():
-    todo:str = 'TODO'
-    in_progress:str = 'IN PROGRESS'
-    done:str = 'DONE'
+    TODO:str = 'TODO'
+    IN_PROGRESS:str = 'IN-PROGRESS'
+    DONE:str = 'DONE'

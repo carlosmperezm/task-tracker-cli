@@ -4,7 +4,7 @@ from datetime import datetime
 
 class Task:
 
-    def __init__(self,task_id:int,description:str,status:Status=Status.todo)->None:
+    def __init__(self,task_id:int,description:str,status:Status=Status.TODO)->None:
         self.description:str=description
         self.status:Status=status
         self.created_at:dict[str,Any] = self.created_at()
