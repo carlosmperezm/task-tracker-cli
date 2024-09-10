@@ -31,8 +31,11 @@ def add(description:str)->None:
 def update(task_id:str)->None:...
 
 def delete(task_id:str)->str:
-    # TODO: it's not working
     tasks:list[dict[str,Any] | None]= all_tasks()
+    try:
+        task_id = int(task_id)
+    except Exception as e:
+        return f'"{task_id}" is not a valid number'
 
     for index,task in enumerate(tasks.copy()):
         if task.get('task_id') == task_id:
@@ -84,8 +87,8 @@ def main()->None:
     elif args.command =='list':
         print(all_tasks())
     elif args.command == 'delete':
-        print
-        delete(args.task_id)
+        print(delete(args.task_id))
+        
 
     else:
         parser.print_help()
