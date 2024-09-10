@@ -29,7 +29,19 @@ def add(description:str)->None:
 
 
 
-def update(task_id:str)->None:...#TODO
+def update(task_id:str,description:str)->str:
+    tasks:list[dict[str,Any] | None]= all_tasks()
+    try:
+        task_id = int(task_id)
+    except Exception as e:
+        return f'"{task_id}" is not a valid number'
+
+    for index,task in enumerate(tasks):
+        if task.get('task_id') == task_id:
+            tasks[index]['description'] = description
+            write_json(tasks)
+            return 'Data updated successfully'
+    return 'No task with that id was found :('
 
 def delete(task_id:str)->str:
     tasks:list[dict[str,Any] | None]= all_tasks()
@@ -110,6 +122,10 @@ def main()->None:
     parser_mark_in_progress:ArgumentParser = subparser.add_parser('mark-in-progress', help='Mark a task as IN PROGRESS')
     parser_mark_in_progress.add_argument('task_id',help='Provide a id in order to know wich task set as IN PROGRESS')
 
+    parser_update:ArgumentParser = subparser.add_parser('update', help= 'Updated the task\' description ')
+    parser_update.add_argument('task_id',help='Provide an id to know what task to updated')
+    parser_update.add_argument('new_description',help='Provide the new description you want to update')
+
 
     args = parser.parse_args()
 
@@ -127,6 +143,9 @@ def main()->None:
 
     elif args.command == 'mark-in-progress':
         print(mark_as_in_progress(args.task_id))
+
+    elif args.command == 'update':
+        print(update(args.task_id, args.new_description))
 
 
     else:
