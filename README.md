@@ -17,6 +17,14 @@ Add a new task:
 ```
 task-cli add "My new Task"
 ```
+Mark a task as "done" or "in-progress" like this:
+```
+task-cli mark-done 2
+```
+or 
+```
+task-cli mark-in-progress 2
+```
 List all the tasks:
 ```
 task-cli list
@@ -33,7 +41,7 @@ task-cli list -flag done
 this shows you all the list you've done
 or
 ```
-task-cli list -flag in-progress
+task-cli list -f in-progress
 ```
 this shows you all the list you have in progress
 
@@ -47,6 +55,8 @@ Delete a task by id:
 ```
 task-cli delete 3
 ```
+### Notes:
+The application will create a new tasks.json file if not exists
 
 
 
